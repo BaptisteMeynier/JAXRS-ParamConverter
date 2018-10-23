@@ -12,8 +12,9 @@ package org.javaee7.jax.rs.param.converter;
         import org.junit.Test;
         import org.junit.runner.RunWith;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
-        import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Client;
         import javax.ws.rs.client.ClientBuilder;
         import javax.ws.rs.client.WebTarget;
         import javax.ws.rs.core.MediaType;
@@ -48,7 +49,11 @@ public class PersonnEndpointTest {
     public static WebArchive createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class)
-                .addClasses(Application.class,PersonnEndpoint.class,PersonnConverterProvider.class, Personn.class)
+                .addClasses(PersonnApplication.class)
+                .addClasses(PersonnEndpoint.class)
+                .addClasses(PersonnConverterProvider.class)
+                .addClasses(PersonnParamConverter.class)
+                .addClasses(Personn.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
@@ -67,14 +72,27 @@ public class PersonnEndpointTest {
     // ======================================
 
     @Test
-    public void shouldFindAll() throws Exception {
+    public void shouldMatch() throws Exception {
         Response response = personnTarget
+        		.queryParam("personn", "Baptiste,29")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .get();
 
         assertEquals(200, response.getStatus());
     }
 
+    
+    @Test
+    public void shouldMatchAndTransformStringToPersonn() throws Exception {
+        Response response = personnTarget
+        		.register(JacksonJsonProvider.class)
+        		.queryParam("personn", "Baptiste,29")
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .get();
+        Personn pers =response.readEntity(Personn.class);
+
+        assertEquals(29, pers.getAge());
+    }
 
 
 }

@@ -1,4 +1,4 @@
-
+package org.javaee7.jax.rs.param.converter;
 
 import org.javaee7.jax.rs.param.converter.Personn;
 
@@ -16,26 +16,7 @@ public class PersonnConverterProvider implements ParamConverterProvider {
     public <T> ParamConverter<T> getConverter(final Class<T> rawType, final Type genericType,
                                               final Annotation[] annotations) {
         if (rawType.getName().equals(Personn.class.getName())) {
-            return new ParamConverter<T>() {
-
-                @Override
-                public T fromString(String value) {
-                    Personn myBean = new Personn();
-                    String[] split = value.split(",");
-                    myBean.setName(split[0]);
-                    myBean.setAge(Integer.parseInt(split[1]));
-
-                    return rawType.cast(myBean);
-                }
-
-                @Override
-                public String toString(T myBean) {
-                    if (myBean == null) {
-                        return null;
-                    }
-                    return myBean.toString();
-                }
-            };
+            return (ParamConverter<T>) new PersonnParamConverter();
         }
         return null;
     }

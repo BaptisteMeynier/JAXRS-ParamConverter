@@ -7,14 +7,13 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 
-
-
 @ApplicationPath("/api")
-public class Application {
+public class PersonnApplication extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> s = new HashSet<Class<?>>();
-        s.add(PeopleEndpoint.class);
+        s.add(PersonnEndpoint.class);
+        s.add(PersonnConverterProvider.class);
         return s;
     }
 }
